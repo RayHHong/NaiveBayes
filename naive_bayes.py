@@ -48,6 +48,7 @@ def naiveBayes(train_set, train_labels, dev_set, smoothing_parameter):
     total_ham = 0
     spam_sum = {}
     ham_sum = {}
+    total = {}
 
     for e, i in zip(train_set, train_labels):
         if(i == 1):
@@ -57,6 +58,8 @@ def naiveBayes(train_set, train_labels, dev_set, smoothing_parameter):
                     spam_sum[w] = 1
                 elif w in spam_sum:
                     spam_sum[w] += 1
+                if w not in total:
+                    total[w] = 1
         elif(i == 0):
             total_ham += len(e)
             for w in e:
@@ -64,7 +67,8 @@ def naiveBayes(train_set, train_labels, dev_set, smoothing_parameter):
                     ham_sum[w] = 1
                 elif w in ham_sum:
                     ham_sum[w] += 1
-
+                if w not in total:
+                    total[w] = 1
     # print(spam_probs)
 
 
@@ -72,8 +76,7 @@ def naiveBayes(train_set, train_labels, dev_set, smoothing_parameter):
     ##laplace smoothing
     #SPAM
     n = sum(spam_sum.values())
-    V = len(spam_sum) + len(ham_sum)
-
+    V = len(total)
     spam_probs = {k: math.log((spam_sum[k]+smoothing_parameter)/(n+smoothing_parameter*(V+1))) for k in spam_sum}
 
     # print(spam_probs)
@@ -99,7 +102,7 @@ def naiveBayes(train_set, train_labels, dev_set, smoothing_parameter):
 
     #HAM
     n = sum(ham_sum.values())
-    V = len(spam_sum) + len(ham_sum)
+    V = len(total)
 
     ham_probs = {k: math.log((ham_sum[k]+smoothing_parameter)/(n+smoothing_parameter*(V+1))) for k in ham_sum}
 
